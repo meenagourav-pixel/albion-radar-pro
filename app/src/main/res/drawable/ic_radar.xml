@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Outer circle -->
+    <path
+        android:pathData="M12,12m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0"
+        android:strokeWidth="2"
+        android:strokeColor="#FFFFFF"
+        android:fillColor="#00000000" />
+    
+    <!-- Middle circle -->
+    <path
+        android:pathData="M12,12m-6,0a6,6 0,1 1,12 0a6,6 0,1 1,-12 0"
+        android:strokeWidth="1.5"
+        android:strokeColor="#80FFFFFF"
+        android:fillColor="#00000000" />
+    
+    <!-- Inner circle -->
+    <path
+        android:pathData="M12,12m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"
+        android:fillColor="#FFFFFF" />
+    
+    <!-- Sweep line -->
+    <path
+        android:pathData="M12,12 L12,2"
+        android:strokeWidth="1.5"
+        android:strokeColor="#E94560" />
+    
+    <!-- Horizontal line -->
+    <path
+        android:pathData="M2,12 L22,12"
+        android:strokeWidth="0.5"
+        android:strokeColor="#40FFFFFF" />
+    
+    <!-- Vertical line -->
+    <path
+        android:pathData="M12,2 L12,22"
+        android:strokeWidth="0.5"
+        android:strokeColor="#40FFFFFF" />
+    
+</vector>
