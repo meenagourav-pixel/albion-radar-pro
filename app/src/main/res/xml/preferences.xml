@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Scanner Settings -->
+    <PreferenceCategory
+        android:title="Scanner Settings"
+        app:iconSpaceReserved="false">
+
+        <SeekBarPreference
+            android:key="scanner_range"
+            android:title="@string/scanner_range"
+            android:summary="@string/scanner_range_summary"
+            android:defaultValue="50"
+            android:min="10"
+            android:max="200"
+            app:showSeekBarValue="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <!-- Overlay Settings -->
+    <PreferenceCategory
+        android:title="@string/overlay_settings"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:key="show_overlay"
+            android:title="@string/show_overlay"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SeekBarPreference
+            android:key="overlay_opacity"
+            android:title="@string/overlay_opacity"
+            android:defaultValue="80"
+            android:min="20"
+            android:max="100"
+            android:dependency="show_overlay"
+            app:showSeekBarValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SeekBarPreference
+            android:key="overlay_size"
+            android:title="@string/overlay_size"
+            android:defaultValue="300"
+            android:min="150"
+            android:max="500"
+            android:dependency="show_overlay"
+            app:showSeekBarValue="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <!-- Alert Settings -->
+    <PreferenceCategory
+        android:title="@string/alert_settings"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:key="sound_alerts"
+            android:title="@string/sound_alerts"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="vibration_alerts"
+            android:title="@string/vibration_alerts"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="alert_hostile"
+            android:title="@string/alert_for_hostile"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="alert_resources"
+            android:title="@string/alert_for_resources"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="alert_mobs"
+            android:title="@string/alert_for_mobs"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="alert_chests"
+            android:title="@string/chests"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <!-- Player Filter Settings -->
+    <PreferenceCategory
+        android:title="Player Filters"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:key="show_players"
+            android:title="@string/show_players"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="show_passive_players"
+            android:title="@string/show_passive_players"
+            android:defaultValue="true"
+            android:dependency="show_players"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="show_hostile_players"
+            android:title="@string/show_hostile_players"
+            android:defaultValue="true"
+            android:dependency="show_players"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="show_faction_players"
+            android:title="@string/show_faction_players"
+            android:defaultValue="true"
+            android:dependency="show_players"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="exclude_party"
+            android:title="@string/exclude_party"
+            android:summary="Exclude party members from hostile alerts"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="exclude_guild"
+            android:title="@string/exclude_guild"
+            android:summary="Exclude guild members from hostile alerts"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="exclude_alliance"
+            android:title="@string/exclude_alliance"
+            android:summary="Exclude alliance members from hostile alerts"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <!-- Entity Display Settings -->
+    <PreferenceCategory
+        android:title="Entity Display"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:key="show_resources"
+            android:title="@string/show_resources"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="show_mobs"
+            android:title="@string/show_mobs"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="show_chests"
+            android:title="@string/show_chests"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="show_fishing"
+            android:title="@string/fishing"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="show_mists"
+            android:title="@string/mists"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="show_dungeons"
+            android:title="@string/dungeons"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <!-- Log Settings -->
+    <PreferenceCategory
+        android:title="Logging"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:key="log_enabled"
+            android:title="@string/log_enabled"
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <SeekBarPreference
+            android:key="max_log_entries"
+            android:title="@string/max_log_entries"
+            android:defaultValue="1000"
+            android:min="100"
+            android:max="5000"
+            android:dependency="log_enabled"
+            app:showSeekBarValue="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
