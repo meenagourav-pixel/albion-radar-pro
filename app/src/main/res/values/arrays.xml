@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Resource Type Names -->
+    <string-array name="resource_types">
+        <item>Fiber</item>
+        <item>Hide</item>
+        <item>Wood</item>
+        <item>Ore</item>
+        <item>Rock</item>
+    </string-array>
+    
+    <!-- Tier Names -->
+    <string-array name="tier_names">
+        <item>Tier 1</item>
+        <item>Tier 2</item>
+        <item>Tier 3</item>
+        <item>Tier 4</item>
+        <item>Tier 5</item>
+        <item>Tier 6</item>
+        <item>Tier 7</item>
+        <item>Tier 8</item>
+    </string-array>
+    
+    <!-- Enchantment Names -->
+    <string-array name="enchant_names">
+        <item>E0 (None)</item>
+        <item>E1 (Uncommon)</item>
+        <item>E2 (Rare)</item>
+        <item>E3 (Epic)</item>
+        <item>E4 (Legendary)</item>
+    </string-array>
+    
+    <!-- Mob Type Names -->
+    <string-array name="mob_types">
+        <item>Living Harvestable</item>
+        <item>Living Skinnable</item>
+        <item>Enemy</item>
+        <item>Enchanted Enemy</item>
+        <item>Mini Boss</item>
+        <item>Boss</item>
+        <item>Drone</item>
+        <item>Mist Boss</item>
+        <item>Events</item>
+    </string-array>
+    
+    <!-- Mist Types -->
+    <string-array name="mist_types">
+        <item>Solo Mist</item>
+        <item>Duo Mist</item>
+        <item>Small Group Mist</item>
+        <item>Full Group Mist</item>
+        <item>Corrupted Dungeon</item>
+        <item>Avalonian Raid</item>
+    </string-array>
+    
+    <!-- Dungeon Types -->
+    <string-array name="dungeon_types">
+        <item>Solo Yellow</item>
+        <item>Solo Blue</item>
+        <item>Solo Green</item>
+        <item>Solo Red</item>
+        <item>Solo Black</item>
+        <item>Group Yellow</item>
+        <item>Group Blue</item>
+        <item>Group Green</item>
+        <item>Group Red</item>
+        <item>Group Black</item>
+        <item>Avalonian</item>
+        <item>Hellgate</item>
+        <item>Expedition</item>
+        <item>Corrupted</item>
+    </string-array>
+    
+    <!-- Player Status -->
+    <string-array name="player_status">
+        <item>Passive</item>
+        <item>Faction</item>
+        <item>Hostile</item>
+    </string-array>
+</resources>
