@@ -145,4 +145,135 @@ class RadarView @JvmOverloads constructor(
         
         // Draw range circle
         val rangeRadius = scannerRange * scale
-        if (rangeRadius < radius
+        if (rangeRadius < radius) {
+            canvas.drawCircle(centerX, centerY, rangeRadius, rangePaint)
+        }
+        
+        // Draw center point (player)
+        canvas.drawCircle(centerX, centerY, 6f, centerPaint)
+        
+        // Draw entities
+        drawEntities(canvas, radius)
+    }
+    
+    private fun drawEntities(canvas: Canvas, maxRadius: Float) {
+        // Draw resources
+        if (showResources) {
+            radarState.resources.values.forEach { resource ->
+                drawEntity(canvas, resource, maxRadius, resourcePaint, 4f)
+            }
+        }
+        
+        // Draw mobs
+        if (showMobs) {
+            radarState.mobs.values.forEach { mob ->
+                val size = 4f * mob.getSizeMultiplier()
+                drawEntity(canvas, mob, maxRadius, mobPaint, size)
+            }
+        }
+        
+        // Draw chests
+        if (showChests) {
+            radarState.chests.values.forEach { chest ->
+                drawEntity(canvas, chest, maxRadius, chestPaint, 5f)
+            }
+        }
+        
+        // Draw fishing nodes
+        if (showFishing) {
+            radarState.fishingNodes.values.forEach { fishing ->
+                drawEntity(canvas, fishing, maxRadius, resourcePaint, 4f)
+            }
+        }
+        
+        // Draw mists
+        if (showMists) {
+            radarState.mists.values.forEach { mist ->
+                val size = 5f * mist.getSizeMultiplier()
+                drawEntity(canvas, mist, maxRadius, mobPaint, size)
+            }
+        }
+        
+        // Draw dungeons
+        if (showDungeons) {
+            radarState.dungeons.values.forEach { dungeon ->
+                val size = 5f * dungeon.getSizeMultiplier()
+                drawEntity(canvas, dungeon, maxRadius, chestPaint, size)
+            }
+        }
+        
+        // Draw players (last, on top)
+        if (showPlayers) {
+            radarState.players.values.forEach { player ->
+                drawPlayer(canvas, player, maxRadius)
+            }
+        }
+    }
+    
+    private fun drawEntity(
+        canvas: Canvas, 
+        entity: Entity, 
+        maxRadius: Float,
+        paint: Paint,
+        size: Float
+    ) {
+        val distance = entity.distanceFromPlayer()
+        if (distance > scannerRange) return
+        
+        val x = centerX + entity.posX * scale
+        val y = centerY + entity.posY * scale
+        
+        // Check if within radar bounds
+        val distFromCenter = sqrt((x - centerX).pow(2) + (y - centerY).pow(2))
+        if (distFromCenter > maxRadius) return
+        
+        // Set color based on entity type
+        paint.color = when (entity) {
+            is Resource -> entity.getColor()
+            is Mob -> entity.getColor()
+            is Chest -> entity.getColor()
+            is FishingNode -> entity.getColor()
+            is Mist -> entity.getColor()
+            is Dungeon -> entity.getColor()
+            else -> Color.WHITE
+        }
+        
+        // Draw dot
+        canvas.drawCircle(x, y, size, paint)
+    }
+    
+    private fun drawPlayer(canvas: Canvas, player: Player, maxRadius: Float) {
+        val distance = player.distanceFromPlayer()
+        if (distance > scannerRange) return
+        
+        val x = centerX + player.posX * scale
+        val y = centerY + player.posY * scale
+        
+        // Check if within radar bounds
+        val distFromCenter = sqrt((x - centerX).pow(2) + (y - centerY).pow(2))
+        if (distFromCenter > maxRadius) return
+        
+        // Set color based on player status
+        playerPaint.color = player.getColor()
+        
+        // Draw dot (larger for hostile)
+        val size = if (player.isHostile()) 6f else 4f
+        canvas.drawCircle(x, y, size, playerPaint)
+        
+        // Draw hostile indicator ring
+        if (player.isHostile()) {
+            val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.RED
+                style = Paint.Style.STROKE
+                strokeWidth = 2f
+            }
+            canvas.drawCircle(x, y, 10f, ringPaint)
+        }
+        
+        // Draw name for hostile players
+        if (player.isHostile()) {
+            textPaint.color = Color.RED
+            canvas.drawText(player.name, x, y - 15f, textPaint)
+        }
+    }
+}
