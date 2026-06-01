@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- VPN Permission -->
+    <uses-permission android:name="android.permission.BIND_VPN_SERVICE" />
+    
+    <!-- Network Permission -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    
+    <!-- Overlay Permission -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    
+    <!-- Foreground Service -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    
+    <!-- Vibration for Alerts -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    
+    <!-- Wake Lock -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    
+    <!-- Notification -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:name=".AlbionRadarApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AlbionRadarPro"
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:targetApi="34">
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AlbionRadarPro">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:label="@string/settings_title"
+            android:theme="@style/Theme.AlbionRadarPro" />
+
+        <activity
+            android:name=".ui.ResourceFilterActivity"
+            android:exported="false"
+            android:label="@string/resource_filter_title"
+            android:theme="@style/Theme.AlbionRadarPro" />
+
+        <activity
+            android:name=".ui.MobFilterActivity"
+            android:exported="false"
+            android:label="@string/mob_filter_title"
+            android:theme="@style/Theme.AlbionRadarPro" />
+
+        <activity
+            android:name=".ui.AlertConfigActivity"
+            android:exported="false"
+            android:label="@string/alert_config_title"
+            android:theme="@style/Theme.AlbionRadarPro" />
+
+        <activity
+            android:name=".ui.LogViewerActivity"
+            android:exported="false"
+            android:label="@string/log_viewer_title"
+            android:theme="@style/Theme.AlbionRadarPro" />
+
+        <!-- VPN Service -->
+        <service
+            android:name=".service.RadarVpnService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="packet_capture" />
+        </service>
+
+        <!-- Overlay Service -->
+        <service
+            android:name=".service.RadarOverlayService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="overlay" />
+        </service>
+
+        <!-- Notification Channel -->
+        <receiver
+            android:name=".receiver.NotificationReceiver"
+            android:exported="false" />
+
+    </application>
+
+</manifest>
