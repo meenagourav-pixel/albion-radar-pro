@@ -9,6 +9,16 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * Central state manager for all radar entities
  */
+object RadarStateManager {
+    
+    private val _instance = RadarState()
+    
+    fun getInstance(): RadarState = _instance
+}
+
+/**
+ * Central state manager for all radar entities
+ */
 class RadarState {
     
     // Players
@@ -56,9 +66,27 @@ class RadarState {
     private val _partyMembers = mutableSetOf<String>()
     val partyMembers: Set<String> get() = _partyMembers.toSet()
     
+    // Guild members
+    private val _guildMembers = mutableSetOf<String>()
+    val guildMembers: Set<String> get() = _guildMembers.toSet()
+    
+    // Alliance members
+    private val _allianceMembers = mutableSetOf<String>()
+    val allianceMembers: Set<String> get() = _allianceMembers.toSet()
+    
     // State flows for UI updates
     private val _updateFlow = MutableStateFlow(0L)
     val updateFlow: StateFlow<Long> = _updateFlow.asStateFlow()
+    
+    // Entity counts
+    private val _playerCount = MutableStateFlow(0)
+    val playerCount: StateFlow<Int> = _playerCount.asStateFlow()
+    
+    private val _resourceCount = MutableStateFlow(0)
+    val resourceCount: StateFlow<Int> = _resourceCount.asStateFlow()
+    
+    private val _hostileCount = MutableStateFlow(0)
+    val hostileCount: StateFlow<Int> = _hostileCount.asStateFlow()
     
     /**
      * Set local player info
@@ -76,6 +104,7 @@ class RadarState {
      */
     fun addPlayer(player: Player) {
         _players[player.id] = player
+        updateCounts()
         notifyUpdate()
     }
     
@@ -84,6 +113,7 @@ class RadarState {
      */
     fun removePlayer(id: Long) {
         _players.remove(id)
+        updateCounts()
         notifyUpdate()
     }
     
@@ -98,10 +128,16 @@ class RadarState {
     }
     
     /**
+     * Get player by ID
+     */
+    fun getPlayer(id: Long): Player? = _players[id]
+    
+    /**
      * Add/update a resource
      */
     fun addResource(resource: Resource) {
         _resources[resource.id] = resource
+        updateCounts()
         notifyUpdate()
     }
     
@@ -110,18 +146,24 @@ class RadarState {
      */
     fun removeResource(id: Long) {
         _resources.remove(id)
+        updateCounts()
         notifyUpdate()
     }
     
     /**
      * Update resource state
      */
-    fun updateResourceState(id: Long, state: com.albionradar.data.model.ResourceState) {
+    fun updateResourceState(id: Long, state: ResourceState) {
         _resources[id]?.let { resource ->
             _resources[id] = resource.copy(state = state)
             notifyUpdate()
         }
     }
+    
+    /**
+     * Get resource by ID
+     */
+    fun getResource(id: Long): Resource? = _resources[id]
     
     /**
      * Add/update a mob
@@ -242,6 +284,34 @@ class RadarState {
     }
     
     /**
+     * Add guild member
+     */
+    fun addGuildMember(name: String) {
+        _guildMembers.add(name)
+    }
+    
+    /**
+     * Check if player name is in guild
+     */
+    fun isGuildMember(name: String): Boolean {
+        return _guildMembers.contains(name) || name == _localPlayerGuild
+    }
+    
+    /**
+     * Add alliance member
+     */
+    fun addAllianceMember(name: String) {
+        _allianceMembers.add(name)
+    }
+    
+    /**
+     * Check if player name is in alliance
+     */
+    fun isAllianceMember(name: String): Boolean {
+        return _allianceMembers.contains(name) || name == _localPlayerAlliance
+    }
+    
+    /**
      * Clear all entities
      */
     fun clearAll() {
@@ -253,6 +323,9 @@ class RadarState {
         _mists.clear()
         _dungeons.clear()
         _partyMembers.clear()
+        _guildMembers.clear()
+        _allianceMembers.clear()
+        updateCounts()
         notifyUpdate()
     }
     
@@ -260,7 +333,7 @@ class RadarState {
      * Get all entities within range
      */
     fun getEntitiesInRange(range: Float): List<Entity> {
-        val result = mutableListOf<com.albionradar.data.model.Entity>()
+        val result = mutableListOf<Entity>()
         
         _players.values.forEach { if (it.isInRange(range)) result.add(it) }
         _resources.values.forEach { if (it.isInRange(range)) result.add(it) }
@@ -283,9 +356,22 @@ class RadarState {
     }
     
     /**
+     * Update counts
+     */
+    private fun updateCounts() {
+        _playerCount.value = _players.size
+        _resourceCount.value = _resources.size
+        _hostileCount.value = getHostilePlayers().size
+    }
+    
+    /**
      * Notify observers of update
      */
     private fun notifyUpdate() {
         _updateFlow.value = System.currentTimeMillis()
+    }
+    
+    companion object {
+        fun getInstance(): RadarState = RadarStateManager.getInstance()
     }
 }
