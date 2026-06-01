@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Albion Radar Pro</string>
+    
+    <!-- Main Activity -->
+    <string name="start_radar">Start Radar</string>
+    <string name="stop_radar">Stop Radar</string>
+    <string name="grant_overlay_permission">Grant Overlay Permission</string>
+    <string name="overlay_permission_required">Overlay permission is required for radar display</string>
+    <string name="vpn_permission_required">VPN permission is required for packet capture</string>
+    <string name="radar_status_active">Radar Active</string>
+    <string name="radar_status_inactive">Radar Inactive</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="scanner_range">Scanner Range</string>
+    <string name="scanner_range_summary">Adjust the radar scanner detection range</string>
+    <string name="overlay_settings">Overlay Settings</string>
+    <string name="show_overlay">Show Overlay Radar</string>
+    <string name="overlay_opacity">Overlay Opacity</string>
+    <string name="overlay_size">Overlay Size</string>
+    <string name="alert_settings">Alert Settings</string>
+    <string name="sound_alerts">Sound Alerts</string>
+    <string name="vibration_alerts">Vibration Alerts</string>
+    <string name="alert_for_hostile">Alert for Hostile Players</string>
+    <string name="alert_for_resources">Alert for Resources</string>
+    <string name="resource_filter_title">Resource Filter</string>
+    <string name="mob_filter_title">Mob Filter</string>
+    <string name="alert_config_title">Alert Configuration</string>
+    <string name="log_viewer_title">Event Logs</string>
+    
+    <!-- Resource Types -->
+    <string name="fiber">Fiber</string>
+    <string name="hide">Hide</string>
+    <string name="wood">Wood</string>
+    <string name="ore">Ore</string>
+    <string name="rock">Rock</string>
+    
+    <!-- Resource Categories -->
+    <string name="static_resources">Static Resources</string>
+    <string name="living_resources">Living Resources</string>
+    
+    <!-- Tiers -->
+    <string name="tier_1">Tier 1</string>
+    <string name="tier_2">Tier 2</string>
+    <string name="tier_3">Tier 3</string>
+    <string name="tier_4">Tier 4</string>
+    <string name="tier_5">Tier 5</string>
+    <string name="tier_6">Tier 6</string>
+    <string name="tier_7">Tier 7</string>
+    <string name="tier_8">Tier 8</string>
+    
+    <!-- Enchantments -->
+    <string name="enchant_0">E0</string>
+    <string name="enchant_1">E1</string>
+    <string name="enchant_2">E2</string>
+    <string name="enchant_3">E3</string>
+    <string name="enchant_4">E4</string>
+    
+    <!-- Mob Types -->
+    <string name="living_harvestable">Living Harvestable</string>
+    <string name="living_skinnable">Living Skinnable</string>
+    <string name="enemy">Enemy</string>
+    <string name="enchanted_enemy">Enchanted Enemy</string>
+    <string name="mini_boss">Mini Boss</string>
+    <string name="boss">Boss</string>
+    <string name="drone">Drone</string>
+    <string name="mist_boss">Mist Boss</string>
+    <string name="events">Events</string>
+    
+    <!-- Players -->
+    <string name="players">Players</string>
+    <string name="passive">Passive</string>
+    <string name="hostile">Hostile</string>
+    <string name="faction">Faction</string>
+    
+    <!-- Others -->
+    <string name="chests">Chests</string>
+    <string name="fishing">Fishing</string>
+    <string name="mists">Mists</string>
+    <string name="dungeons">Dungeons</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_name">Radar Service</string>
+    <string name="notification_channel_desc">Radar service notification</string>
+    <string name="notification_title">Albion Radar Pro</string>
+    <string name="notification_content">Radar is running…</string>
+    <string name="notification_hostile_detected">Hostile Player Detected!</string>
+    <string name="notification_resource_detected">Resource Detected!</string>
+    
+    <!-- Actions -->
+    <string name="export_logs">Export Logs</string>
+    <string name="clear_logs">Clear Logs</string>
+    <string name="reset_filters">Reset Filters</string>
+    <string name="select_all">Select All</string>
+    <string name="deselect_all">Deselect All</string>
+    
+    <!-- Messages -->
+    <string name="logs_exported">Logs exported successfully</string>
+    <string name="logs_cleared">Logs cleared</string>
+    <string name="no_logs">No logs available</string>
+    <string name="permission_granted">Permission granted</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="service_started">Radar service started</string>
+    <string name="service_stopped">Radar service stopped</string>
+</resources>
