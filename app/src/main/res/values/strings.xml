@@ -24,6 +24,7 @@
     <string name="vibration_alerts">Vibration Alerts</string>
     <string name="alert_for_hostile">Alert for Hostile Players</string>
     <string name="alert_for_resources">Alert for Resources</string>
+    <string name="alert_for_mobs">Alert for Mobs</string>
     <string name="resource_filter_title">Resource Filter</string>
     <string name="mob_filter_title">Mob Filter</string>
     <string name="alert_config_title">Alert Configuration</string>
@@ -74,6 +75,20 @@
     <string name="hostile">Hostile</string>
     <string name="faction">Faction</string>
     
+    <!-- Player Filters -->
+    <string name="show_players">Show Players</string>
+    <string name="show_passive_players">Show Passive Players</string>
+    <string name="show_hostile_players">Show Hostile Players</string>
+    <string name="show_faction_players">Show Faction Players</string>
+    <string name="exclude_party">Exclude Party Members</string>
+    <string name="exclude_guild">Exclude Guild Members</string>
+    <string name="exclude_alliance">Exclude Alliance Members</string>
+    
+    <!-- Entity Display -->
+    <string name="show_resources">Show Resources</string>
+    <string name="show_mobs">Show Mobs</string>
+    <string name="show_chests">Show Chests</string>
+    
     <!-- Others -->
     <string name="chests">Chests</string>
     <string name="fishing">Fishing</string>
@@ -103,4 +118,8 @@
     <string name="permission_denied">Permission denied</string>
     <string name="service_started">Radar service started</string>
     <string name="service_stopped">Radar service stopped</string>
+    
+    <!-- Logging -->
+    <string name="log_enabled">Enable Logging</string>
+    <string name="max_log_entries">Maximum Log Entries</string>
 </resources>
