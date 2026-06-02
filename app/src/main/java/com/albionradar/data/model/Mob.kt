@@ -10,7 +10,7 @@ data class Mob(
     override var posX: Float,
     override var posY: Float,
     val mobType: Int,
-    val typeName: String,
+    override val typeName: String,
     val tier: Int,
     val enchantLevel: Int,
     val health: Int = 100,
