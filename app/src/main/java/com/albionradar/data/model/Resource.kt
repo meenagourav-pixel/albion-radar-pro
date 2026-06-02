@@ -96,12 +96,3 @@ data class Resource(
         }
     }
 }
-
-/**
- * Resource state
- */
-enum class ResourceState {
-    AVAILABLE,      // Ready to harvest
-    DEPLETED,       // Harvested/empty
-    IN_PROGRESS     // Being harvested by someone
-}
