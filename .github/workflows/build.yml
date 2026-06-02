@@ -30,25 +30,62 @@ jobs:
     - name: Install Pillow
       run: pip install Pillow
 
-    - name: Delete old corrupted launcher icons
+    - name: Clean all resource directories
       run: |
+        echo "Removing all mipmap directories..."
         rm -rf app/src/main/res/mipmap-hdpi
         rm -rf app/src/main/res/mipmap-mdpi
         rm -rf app/src/main/res/mipmap-xhdpi
         rm -rf app/src/main/res/mipmap-xxhdpi
         rm -rf app/src/main/res/mipmap-xxxhdpi
-        echo "Deleted old icon folders"
+        rm -rf app/src/main/res/mipmap-anydpi-v26
+        echo "Removing build caches..."
+        rm -rf app/build
+        rm -rf build
+        rm -rf .gradle
+        echo "Clean complete"
 
     - name: Generate launcher icons
       run: python3 scripts/generate_icons.py
 
-    - name: Verify icons created
+    - name: Recreate adaptive icons
       run: |
-        ls -la app/src/main/res/mipmap-hdpi/
-        ls -la app/src/main/res/mipmap-mdpi/
+        mkdir -p app/src/main/res/mipmap-anydpi-v26
+        cat > app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml << 'EOF'
+        <?xml version="1.0" encoding="utf-8"?>
+        <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+            <background android:drawable="@drawable/ic_launcher_background"/>
+            <foreground android:drawable="@drawable/ic_launcher_foreground"/>
+        </adaptive-icon>
+        EOF
+        cat > app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml << 'EOF'
+        <?xml version="1.0" encoding="utf-8"?>
+        <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+            <background android:drawable="@drawable/ic_launcher_background"/>
+            <foreground android:drawable="@drawable/ic_launcher_foreground"/>
+        </adaptive-icon>
+        EOF
+        echo "Adaptive icons created"
+
+    - name: Verify all files
+      run: |
+        echo "=== Checking mipmap directories ==="
+        ls -la app/src/main/res/ | grep mipmap || echo "No mipmap dirs"
+        echo "=== Checking hdpi ==="
+        ls -la app/src/main/res/mipmap-hdpi/ || echo "No hdpi"
+        echo "=== Checking anydpi ==="
+        ls -la app/src/main/res/mipmap-anydpi-v26/ || echo "No anydpi"
+        echo "=== Validating XML files ==="
+        for f in app/src/main/res/mipmap-anydpi-v26/*.xml; do
+          head -1 "$f"
+          tail -1 "$f"
+        done
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
+    - name: Clean Gradle build
+      run: ./gradlew clean
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug
