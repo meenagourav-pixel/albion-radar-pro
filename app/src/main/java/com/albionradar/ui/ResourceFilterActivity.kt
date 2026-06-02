@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.albionradar.R
-import com.albionradartdar.util.PreferenceKeys
+import com.albionradar.util.PreferenceKeys
 import com.google.android.material.tabs.TabLayout
 
 class ResourceFilterActivity : AppCompatActivity() {
@@ -25,7 +25,7 @@ class ResourceFilterActivity : AppCompatActivity() {
     private val tiers = listOf(1, 2, 3, 4, 5, 6, 7, 8)
     private val enchants = listOf(0, 1, 2, 3, 4)
     
-    private var currentResourceType = 0 // 0 = Fiber, etc.
+    private var currentResourceType = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +43,6 @@ class ResourceFilterActivity : AppCompatActivity() {
         tabLayout = findViewById(R.id.tab_layout)
         recyclerView = findViewById(R.id.recycler_view)
         
-        // Setup tabs for resource types
         resourceTypes.forEach { type ->
             tabLayout.addTab(tabLayout.newTab().setText(type))
         }
@@ -58,12 +57,10 @@ class ResourceFilterActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
         
-        // Setup RecyclerView
         adapter = ResourceFilterAdapter(this, currentResourceType)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
         
-        // Setup buttons
         findViewById<View>(R.id.btn_select_all)?.setOnClickListener {
             adapter.selectAll()
         }
@@ -78,9 +75,6 @@ class ResourceFilterActivity : AppCompatActivity() {
         return true
     }
 
-    /**
-     * Adapter for resource filter items
-     */
     inner class ResourceFilterAdapter(
         private val context: Context,
         private var resourceType: Int
@@ -97,7 +91,6 @@ class ResourceFilterActivity : AppCompatActivity() {
             resourceType = type
             items.clear()
             
-            // Generate all combinations of tier and enchant
             for (tier in tiers) {
                 for (enchant in enchants) {
                     items.add(FilterItem(tier, enchant))
@@ -130,7 +123,7 @@ class ResourceFilterActivity : AppCompatActivity() {
         
         private fun loadFilterState(tier: Int, enchant: Int): Boolean {
             val key = "${PreferenceKeys.RESOURCE_FILTER_PREFIX}${resourceType}_${tier}_$enchant"
-            return prefs.getBoolean(key, tier >= 4) // Default: show T4+
+            return prefs.getBoolean(key, tier >= 4)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -142,10 +135,8 @@ class ResourceFilterActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = items[position]
             
-            // Set tier text
             holder.tierText.text = "T${item.tier}"
             
-            // Set tier color
             val tierColor = when (item.tier) {
                 1 -> R.color.tier_1
                 2 -> R.color.tier_2
@@ -159,10 +150,8 @@ class ResourceFilterActivity : AppCompatActivity() {
             }
             holder.tierText.setTextColor(ContextCompat.getColor(context, tierColor))
             
-            // Set enchant text
             holder.enchantText.text = if (item.enchant == 0) "" else ".${item.enchant}"
             
-            // Set enchant color
             val enchantColor = when (item.enchant) {
                 1 -> R.color.enchant_1
                 2 -> R.color.enchant_2
@@ -172,17 +161,14 @@ class ResourceFilterActivity : AppCompatActivity() {
             }
             holder.enchantText.setTextColor(ContextCompat.getColor(context, enchantColor))
             
-            // Set checkbox state
             item.isChecked = loadFilterState(item.tier, item.enchant)
             holder.checkBox.isChecked = item.isChecked
             
-            // Checkbox listener
             holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
                 item.isChecked = isChecked
                 saveFilterState(item)
             }
             
-            // Row click listener
             holder.itemView.setOnClickListener {
                 holder.checkBox.toggle()
             }
