@@ -34,7 +34,7 @@ class RadarVpnService : VpnService() {
         private const val VPN_ROUTE = "0.0.0.0"
         
         private val _isRunning = MutableStateFlow(false)
-        val isRunning: StateFlow<Boolean> = _isRunning.asStateFlow()
+        val isRunning: StateFlow<Boolean> = _isRunning
         
         const val ACTION_START = "com.albionradar.ACTION_START"
         const val ACTION_STOP = "com.albionradar.ACTION_STOP"
@@ -46,7 +46,7 @@ class RadarVpnService : VpnService() {
     
     private val isStopping = AtomicBoolean(false)
     private val parser = ProtocolParser()
-    private val radarState = RadarState()
+    private val radarState = RadarState.getInstance()
     private val logManager = EventLogManager.getInstance()
     
     private var captureJob: Job? = null
@@ -67,9 +67,6 @@ class RadarVpnService : VpnService() {
         return START_STICKY
     }
 
-    /**
-     * Start the VPN and packet capture
-     */
     private fun startRadar() {
         if (_isRunning.value) {
             Log.d(TAG, "Radar already running")
@@ -78,10 +75,8 @@ class RadarVpnService : VpnService() {
         
         Log.d(TAG, "Starting radar...")
         
-        // Start foreground service
         startForeground(com.albionradar.util.Constants.NotificationId.SERVICE, createNotification())
         
-        // Setup VPN interface
         if (!setupVpn()) {
             Log.e(TAG, "Failed to setup VPN")
             stopSelf()
@@ -93,12 +88,10 @@ class RadarVpnService : VpnService() {
         
         logManager.logServiceStarted()
         
-        // Start packet capture coroutine
         captureJob = CoroutineScope(Dispatchers.IO).launch {
             capturePackets()
         }
         
-        // Start event processing coroutine
         processJob = CoroutineScope(Dispatchers.IO).launch {
             processEvents()
         }
@@ -106,9 +99,6 @@ class RadarVpnService : VpnService() {
         Log.d(TAG, "Radar started successfully")
     }
 
-    /**
-     * Stop the VPN and packet capture
-     */
     private fun stopRadar() {
         if (!_isRunning.value) return
         
@@ -116,11 +106,9 @@ class RadarVpnService : VpnService() {
         
         isStopping.set(true)
         
-        // Cancel jobs
         captureJob?.cancel()
         processJob?.cancel()
         
-        // Close VPN interface
         try {
             inputChannel?.close()
             outputChannel?.close()
@@ -133,7 +121,6 @@ class RadarVpnService : VpnService() {
         inputChannel = null
         outputChannel = null
         
-        // Clear state
         radarState.clearAll()
         parser.clearFragments()
         
@@ -146,9 +133,6 @@ class RadarVpnService : VpnService() {
         Log.d(TAG, "Radar stopped")
     }
 
-    /**
-     * Setup VPN interface
-     */
     private fun setupVpn(): Boolean {
         return try {
             val builder = Builder()
@@ -156,9 +140,6 @@ class RadarVpnService : VpnService() {
                 .addAddress(VPN_ADDRESS, 24)
                 .addRoute(VPN_ROUTE, 0)
                 .setMtu(1500)
-            
-            // Allow all apps to be routed through VPN
-            // We'll filter only Albion packets
             
             vpnInterface = builder.establish()
             
@@ -179,9 +160,6 @@ class RadarVpnService : VpnService() {
         }
     }
 
-    /**
-     * Main packet capture loop
-     */
     private suspend fun capturePackets() {
         Log.d(TAG, "Starting packet capture loop")
         
@@ -189,7 +167,6 @@ class RadarVpnService : VpnService() {
         
         while (!isStopping.get() && vpnInterface != null) {
             try {
-                // Read packet from VPN interface
                 val length = inputChannel?.read(buffer) ?: -1
                 
                 if (length <= 0) {
@@ -197,7 +174,6 @@ class RadarVpnService : VpnService() {
                     continue
                 }
                 
-                // Process the packet
                 processPacket(buffer, length)
                 
             } catch (e: Exception) {
@@ -211,18 +187,13 @@ class RadarVpnService : VpnService() {
         Log.d(TAG, "Packet capture loop ended")
     }
 
-    /**
-     * Process a single packet
-     */
     private fun processPacket(buffer: ByteArray, length: Int) {
         try {
-            // Parse IP header
             if (length < 20) return
             
             val version = (buffer[0].toInt() shr 4) and 0x0F
-            if (version != 4) return // Only IPv4 for now
+            if (version != 4) return
             
-            // Extract source and destination ports
             val ipHeaderLength = (buffer[0].toInt() and 0x0F) * 4
             if (length < ipHeaderLength + 20) return
             
@@ -231,34 +202,28 @@ class RadarVpnService : VpnService() {
             val dstPort = ((buffer[ipHeaderLength + 2].toInt() and 0xFF) shl 8) or 
                           (buffer[ipHeaderLength + 3].toInt() and 0xFF)
             
-            // Check if this is Albion traffic (port 5056)
             if (srcPort != Constants.ALBION_PORT && dstPort != Constants.ALBION_PORT) {
-                // Not Albion traffic, forward it
                 forwardPacket(buffer, length)
                 return
             }
             
-            // This is Albion traffic - parse it
-            val payloadOffset = ipHeaderLength + 20 // IP header + TCP header (simplified)
+            val payloadOffset = ipHeaderLength + 20
             
             if (length > payloadOffset) {
                 val payloadSize = length - payloadOffset
                 
                 if (payloadSize > 2) {
-                    // Parse the game protocol
                     val events = parser.parsePacket(
                         buffer.copyOfRange(payloadOffset, length),
                         payloadSize
                     )
                     
-                    // Handle parsed events
                     events.forEach { event ->
                         handleParsedEvent(event)
                     }
                 }
             }
             
-            // Still forward the packet
             forwardPacket(buffer, length)
             
         } catch (e: Exception) {
@@ -266,29 +231,20 @@ class RadarVpnService : VpnService() {
         }
     }
 
-    /**
-     * Forward packet to actual network
-     */
     private fun forwardPacket(buffer: ByteArray, length: Int) {
         try {
-            // Protect socket from VPN to avoid loop
-            // The packet will be sent through the real network interface
             outputChannel?.write(buffer, 0, length)
         } catch (e: Exception) {
             // Ignore write errors
         }
     }
 
-    /**
-     * Handle parsed event from protocol
-     */
     private fun handleParsedEvent(event: ParsedEvent) {
         when (event) {
             is ParsedEvent.NewCharacter -> {
                 val player = event.player
                 radarState.addPlayer(player)
                 
-                // Log and alert for hostile players
                 if (player.isHostile()) {
                     logManager.logPlayerDetected(
                         player.name, 
@@ -296,7 +252,6 @@ class RadarVpnService : VpnService() {
                         player.posX, 
                         player.posY
                     )
-                    // Trigger alert
                     AlertManager.triggerHostileAlert(this, player)
                 }
             }
@@ -319,7 +274,6 @@ class RadarVpnService : VpnService() {
                     resource.posX,
                     resource.posY
                 )
-                // Check if should alert
                 if (shouldAlertResource(resource)) {
                     AlertManager.triggerResourceAlert(this, resource)
                 }
@@ -373,28 +327,16 @@ class RadarVpnService : VpnService() {
         }
     }
 
-    /**
-     * Process events coroutine
-     */
     private suspend fun processEvents() {
-        // This coroutine can be used for batched processing
         while (!isStopping.get()) {
             delay(100)
         }
     }
 
-    /**
-     * Check if resource should trigger alert
-     */
     private fun shouldAlertResource(resource: com.albionradar.data.model.Resource): Boolean {
-        // Check user preferences for this resource tier/enchant
-        // For now, alert for T6+ resources
         return resource.tier >= 6
     }
 
-    /**
-     * Create notification for foreground service
-     */
     private fun createNotification(): Notification {
         val pendingIntent = PendingIntent.getActivity(
             this,
