@@ -25,9 +25,9 @@ data class Player(
      */
     fun getStatus(): PlayerStatus {
         return when (flag) {
-            Constants.PlayerFlags.PASSIVE -> PlayerStatus.PASSIVE
-            in Constants.PlayerFlags.FACTION_START..Constants.PlayerFlags.FACTION_END -> PlayerStatus.FACTION
-            Constants.PlayerFlags.HOSTILE -> PlayerStatus.HOSTILE
+            PlayerConstants.PlayerFlags.PASSIVE -> PlayerStatus.PASSIVE
+            in PlayerConstants.PlayerFlags.FACTION_START..PlayerConstants.PlayerFlags.FACTION_END -> PlayerStatus.FACTION
+            PlayerConstants.PlayerFlags.HOSTILE -> PlayerStatus.HOSTILE
             else -> PlayerStatus.UNKNOWN
         }
     }
@@ -36,7 +36,7 @@ data class Player(
      * Check if player is hostile (should trigger alert)
      */
     fun isHostile(): Boolean {
-        return flag == Constants.PlayerFlags.HOSTILE && 
+        return flag == PlayerConstants.PlayerFlags.HOSTILE && 
                !isPartyMember && 
                !isGuildMember && 
                !isAllianceMember
@@ -47,20 +47,34 @@ data class Player(
      */
     fun getColor(): Int {
         return when {
-            isPartyMember -> Constants.PlayerColors.PARTY
-            isGuildMember -> Constants.PlayerColors.GUILD
-            isAllianceMember -> Constants.PlayerColors.ALLIANCE
-            getStatus() == PlayerStatus.HOSTILE -> Constants.PlayerColors.HOSTILE
-            getStatus() == PlayerStatus.FACTION -> Constants.PlayerColors.FACTION
-            else -> Constants.PlayerColors.PASSIVE
+            isPartyMember -> PlayerConstants.PlayerColors.PARTY
+            isGuildMember -> PlayerConstants.PlayerColors.GUILD
+            isAllianceMember -> PlayerConstants.PlayerColors.ALLIANCE
+            getStatus() == PlayerStatus.HOSTILE -> PlayerConstants.PlayerColors.HOSTILE
+            getStatus() == PlayerStatus.FACTION -> PlayerConstants.PlayerColors.FACTION
+            else -> PlayerConstants.PlayerColors.PASSIVE
         }
     }
+}
+
+/**
+ * Player constants
+ */
+object PlayerConstants {
+    object PlayerFlags {
+        const val PASSIVE = 0
+        const val FACTION_START = 1
+        const val FACTION_END = 6
+        const val HOSTILE = 255
+    }
     
-    companion object {
-        object Constants {
-            val PlayerColors = com.albionradar.util.Constants.PlayerColors
-            val PlayerFlags = com.albionradar.util.Constants.PlayerFlags
-        }
+    object PlayerColors {
+        const val PASSIVE = 0x00FF88
+        const val HOSTILE = 0xFF0000
+        const val FACTION = 0xFFA500
+        const val GUILD = 0x0088FF
+        const val PARTY = 0x88FF00
+        const val ALLIANCE = 0x00FFFF
     }
 }
 
