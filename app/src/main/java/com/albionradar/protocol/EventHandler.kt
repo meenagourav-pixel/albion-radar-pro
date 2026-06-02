@@ -17,7 +17,6 @@ class EventHandler {
         try {
             val parameters = parseParameters(buffer, paramCount)
             
-            // Extract player data from parameters
             val id = parameters[0]?.asLong() ?: return null
             val name = parameters[1]?.asString() ?: "Unknown"
             val guildName = parameters.getOrNull(2)?.asString()
@@ -25,7 +24,6 @@ class EventHandler {
             val flag = parameters.getOrNull(4)?.asInt() ?: 0
             val itemId = parameters.getOrNull(5)?.asInt() ?: 0
             
-            // Position is typically in later parameters
             val posX = parameters.getOrNull(10)?.asFloat() ?: 0f
             val posY = parameters.getOrNull(11)?.asFloat() ?: 0f
             
@@ -56,11 +54,8 @@ class EventHandler {
             val parameters = parseParameters(buffer, paramCount)
             
             val id = parameters[0]?.asLong() ?: return null
-            
-            // Position bytes - need XOR decoding
             val posBytes = parameters[1]?.asByteArray() ?: return null
             
-            // Decode position (simplified - actual implementation needs XOR key)
             val posX = decodePosition(posBytes, 0)
             val posY = decodePosition(posBytes, 8)
             
@@ -78,11 +73,8 @@ class EventHandler {
     fun parseLeave(buffer: ByteBuffer, paramCount: Int): ParsedEvent? {
         try {
             val parameters = parseParameters(buffer, paramCount)
-            
             val id = parameters[0]?.asLong() ?: return null
-            
             return ParsedEvent.Leave(id)
-            
         } catch (e: Exception) {
             e.printStackTrace()
             return null
@@ -100,10 +92,8 @@ class EventHandler {
             val typeId = parameters[1]?.asInt() ?: 0
             val typeString = parameters.getOrNull(2)?.asString() ?: ""
             
-            // Parse resource info from type string
             val resourceInfo = parseResourceType(typeString, typeId)
             
-            // Position
             val posX = parameters.getOrNull(3)?.asFloat() ?: 0f
             val posY = parameters.getOrNull(4)?.asFloat() ?: 0f
             
@@ -135,8 +125,6 @@ class EventHandler {
         try {
             val parameters = parseParameters(buffer, paramCount)
             
-            // This event contains a list of harvestable objects
-            // Parse each entry
             for (i in 0 until paramCount step 5) {
                 val id = parameters.getOrNull(i)?.asLong() ?: continue
                 val typeId = parameters.getOrNull(i + 1)?.asInt() ?: 0
@@ -175,8 +163,6 @@ class EventHandler {
         
         try {
             val parameters = parseParameters(buffer, paramCount)
-            
-            // Batch format: count + repeated entries
             val count = parameters.getOrNull(0)?.asInt() ?: 0
             
             for (i in 0 until count) {
@@ -242,11 +228,8 @@ class EventHandler {
     fun parseHarvestFinished(buffer: ByteBuffer, paramCount: Int): ParsedEvent? {
         try {
             val parameters = parseParameters(buffer, paramCount)
-            
             val id = parameters[0]?.asLong() ?: return null
-            
             return ParsedEvent.ResourceHarvested(id)
-            
         } catch (e: Exception) {
             e.printStackTrace()
             return null
@@ -264,11 +247,9 @@ class EventHandler {
             val mobIndex = parameters[1]?.asInt() ?: 0
             val typeName = parameters.getOrNull(2)?.asString() ?: "Unknown"
             
-            // Position
             val posX = parameters.getOrNull(3)?.asFloat() ?: 0f
             val posY = parameters.getOrNull(4)?.asFloat() ?: 0f
             
-            // Determine mob type and tier
             val mobType = Mob.determineMobType(mobIndex, typeName)
             val tier = if (mobIndex >= Constants.MOB_TIER_OFFSET) {
                 (mobIndex / Constants.MOB_TIER_OFFSET) + 1
@@ -276,7 +257,6 @@ class EventHandler {
                 (mobIndex / 16) + 1
             }
             
-            // Enchant level (from mob index)
             val enchantLevel = (mobIndex % 16) / 4
             
             val mob = Mob(
@@ -308,11 +288,9 @@ class EventHandler {
             val typeId = parameters[1]?.asInt() ?: 0
             val typeString = parameters.getOrNull(2)?.asString() ?: ""
             
-            // Position
             val posX = parameters.getOrNull(3)?.asFloat() ?: 0f
             val posY = parameters.getOrNull(4)?.asFloat() ?: 0f
             
-            // Determine what type of caged object this is
             when {
                 typeString.contains("CHEST", ignoreCase = true) -> {
                     val chestType = Chest.parseChestType(typeString)
@@ -428,38 +406,25 @@ class EventHandler {
         val type = buffer.get().toInt() and 0xFF
         
         return when (type) {
-            0 -> ParameterValue(null) // Null
-            1 -> ParameterValue(buffer.get().toInt()) // Byte/Int8
-            2 -> { // Short/Int16
-                if (buffer.remaining() >= 2) {
-                    ParameterValue(buffer.short.toInt())
-                } else null
+            0 -> ParameterValue(null)
+            1 -> ParameterValue(buffer.get().toInt())
+            2 -> {
+                if (buffer.remaining() >= 2) ParameterValue(buffer.short.toInt()) else null
             }
-            3 -> { // Int/Int32
-                if (buffer.remaining() >= 4) {
-                    ParameterValue(buffer.int)
-                } else null
+            3 -> {
+                if (buffer.remaining() >= 4) ParameterValue(buffer.int) else null
             }
-            4 -> { // Long/Int64
-                if (buffer.remaining() >= 8) {
-                    ParameterValue(buffer.long)
-                } else null
+            4 -> {
+                if (buffer.remaining() >= 8) ParameterValue(buffer.long) else null
             }
-            5 -> { // Float
-                if (buffer.remaining() >= 4) {
-                    ParameterValue(buffer.float)
-                } else null
-                null
+            5 -> {
+                if (buffer.remaining() >= 4) ParameterValue(buffer.float) else null
             }
-            6 -> { // Double
-                if (buffer.remaining() >= 8) {
-                    ParameterValue(buffer.double)
-                } else null
+            6 -> {
+                if (buffer.remaining() >= 8) ParameterValue(buffer.double) else null
             }
-            7 -> { // Boolean
-                ParameterValue(buffer.get().toInt() != 0)
-            }
-            8 -> { // String
+            7 -> ParameterValue(buffer.get().toInt() != 0)
+            8 -> {
                 if (buffer.remaining() >= 2) {
                     val length = buffer.short.toInt() and 0xFFFF
                     if (buffer.remaining() >= length) {
@@ -469,7 +434,7 @@ class EventHandler {
                     } else null
                 } else null
             }
-            9 -> { // ByteArray
+            9 -> {
                 if (buffer.remaining() >= 4) {
                     val length = buffer.int
                     if (buffer.remaining() >= length && length > 0 && length < 65536) {
@@ -479,7 +444,7 @@ class EventHandler {
                     } else null
                 } else null
             }
-            10 -> { // Array
+            10 -> {
                 if (buffer.remaining() >= 4) {
                     val arrayLength = buffer.int
                     val array = mutableListOf<ParameterValue?>()
@@ -489,7 +454,7 @@ class EventHandler {
                     ParameterValue(array.toTypedArray())
                 } else null
             }
-            11 -> { // Dictionary
+            11 -> {
                 if (buffer.remaining() >= 4) {
                     val dictLength = buffer.int
                     val dict = mutableMapOf<String, ParameterValue?>()
@@ -515,9 +480,7 @@ class EventHandler {
         
         val buffer = ByteBuffer.wrap(bytes, offset, 8).order(ByteOrder.LITTLE_ENDIAN)
         val rawValue = buffer.long
-        
-        // Apply XOR decoding (key varies per session)
-        val decoded = rawValue // Simplified - actual needs XOR key
+        val decoded = rawValue
         
         return java.lang.Float.intBitsToFloat((decoded and 0xFFFFFFFF).toInt())
     }
@@ -526,7 +489,6 @@ class EventHandler {
      * Parse resource type from type string
      */
     private fun parseResourceType(typeString: String, typeId: Int): ResourceInfo {
-        // Parse resource type
         val resourceType = when {
             typeString.contains("FIBER", ignoreCase = true) -> Constants.ResourceType.FIBER
             typeString.contains("HIDE", ignoreCase = true) -> Constants.ResourceType.HIDE
@@ -536,15 +498,9 @@ class EventHandler {
             else -> typeId % 5
         }
         
-        // Parse tier
         val tier = extractTierFromTypeString(typeString)
-        
-        // Parse enchant level
         val enchantLevel = extractEnchantFromTypeString(typeString)
-        
-        // Check if living resource
-        val isLiving = typeString.contains("LIVING", ignoreCase = true) ||
-                       typeString.contains("GIFTCOIN", ignoreCase = true)
+        val isLiving = typeString.contains("LIVING", ignoreCase = true)
         
         return ResourceInfo(resourceType, tier, enchantLevel, isLiving)
     }
@@ -554,4 +510,55 @@ class EventHandler {
      */
     private fun extractTierFromTypeString(typeString: String): Int {
         val tierMatch = Regex("(?i)TIER([1-8])|T([1-8])|@([1-8])").find(typeString)
-        return tierMatch?.groupValues?.filter { it.isNotEmpty() }?.last()?.toInt
+        return tierMatch?.groupValues?.filter { it.isNotEmpty() }?.last()?.toIntOrNull() ?: 1
+    }
+    
+    /**
+     * Extract enchant level from type string
+     */
+    private fun extractEnchantFromTypeString(typeString: String): Int {
+        val enchantMatch = Regex("(?i)LEVEL([0-4])|@([0-4])|\\.([0-4])").find(typeString)
+        return enchantMatch?.groupValues?.filter { it.isNotEmpty() }?.last()?.toIntOrNull() ?: 0
+    }
+    
+    private data class ResourceInfo(
+        val type: Int,
+        val tier: Int,
+        val enchantLevel: Int,
+        val isLiving: Boolean
+    )
+}
+
+class ParameterValue(private val value: Any?) {
+    fun asInt(): Int = when (value) {
+        is Int -> value
+        is Short -> value.toInt()
+        is Byte -> value.toInt()
+        is Long -> value.toInt()
+        is Number -> value.toInt()
+        else -> 0
+    }
+    
+    fun asLong(): Long = when (value) {
+        is Long -> value
+        is Int -> value.toLong()
+        is Number -> value.toLong()
+        else -> 0L
+    }
+    
+    fun asFloat(): Float = when (value) {
+        is Float -> value
+        is Double -> value.toFloat()
+        is Number -> value.toFloat()
+        else -> 0f
+    }
+    
+    fun asString(): String = value?.toString() ?: ""
+    
+    fun asByteArray(): ByteArray = when (value) {
+        is ByteArray -> value
+        else -> ByteArray(0)
+    }
+    
+    fun isNull(): Boolean = value == null
+}
