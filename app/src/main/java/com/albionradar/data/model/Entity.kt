@@ -6,10 +6,10 @@ import kotlin.math.sqrt
  * Base class for all radar entities
  */
 abstract class Entity(
-    val id: Long,
-    var posX: Float,
-    var posY: Float,
-    val typeName: String
+    open val id: Long,
+    open var posX: Float,
+    open var posY: Float,
+    open val typeName: String
 ) {
     abstract val entityType: EntityType
     
