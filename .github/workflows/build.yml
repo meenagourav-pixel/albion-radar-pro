@@ -30,8 +30,22 @@ jobs:
     - name: Install Pillow
       run: pip install Pillow
 
+    - name: Delete old corrupted launcher icons
+      run: |
+        rm -rf app/src/main/res/mipmap-hdpi
+        rm -rf app/src/main/res/mipmap-mdpi
+        rm -rf app/src/main/res/mipmap-xhdpi
+        rm -rf app/src/main/res/mipmap-xxhdpi
+        rm -rf app/src/main/res/mipmap-xxxhdpi
+        echo "Deleted old icon folders"
+
     - name: Generate launcher icons
       run: python3 scripts/generate_icons.py
+
+    - name: Verify icons created
+      run: |
+        ls -la app/src/main/res/mipmap-hdpi/
+        ls -la app/src/main/res/mipmap-mdpi/
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
