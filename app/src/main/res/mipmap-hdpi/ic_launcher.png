@@ -1,6 +1,0 @@
-[This is a placeholder - Replace with actual PNG image file]
-
-To create the launcher icon:
-1. Use Android Studio's Image Asset Studio (right-click res folder -> New -> Image Asset)
-2. Or use an online tool like https://romannurik.github.io/AndroidAssetStudio/
-3. Generate icons for all density buckets: mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi
